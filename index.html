@@ -348,6 +348,72 @@
   .topbar .back{ background:rgba(255,255,255,.9); border:none; color:var(--accent-dark); font-weight:800; border-radius:10px; padding:8px 12px; cursor:pointer; touch-action:manipulation; min-height:40px; font-size:14px; }
   .footer-note{ text-align:center; color:rgba(255,255,255,.9); font-size:12px; padding:6px 10px 2px; line-height:1.5; text-shadow:0 1px 2px rgba(0,0,0,.3); }
   @media (max-width:360px){ .subject-grid{ grid-template-columns:1fr; } .brand h1{ font-size:26px; } }
+
+  /* ---- AI Tutor (Claude) ---- */
+  .tutor-fab{
+    position:fixed; right:16px; bottom:calc(18px + env(safe-area-inset-bottom)); z-index:42;
+    border:none; border-radius:999px; padding:12px 18px; min-height:48px;
+    background:#fff; color:var(--accent-dark); font-family:inherit; font-weight:800; font-size:15px;
+    box-shadow:0 10px 26px rgba(40,15,35,.38); cursor:pointer; touch-action:manipulation;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tutor-fab:active{ transform:scale(.96); }
+  body:has(#calc-bar) .tutor-fab{ bottom:calc(84px + env(safe-area-inset-bottom)); }
+  body[data-tutor="off"] .tutor-fab{ display:none; }
+  .tutor-backdrop{ position:fixed; inset:0; background:rgba(30,12,28,.5); z-index:60; display:none; }
+  .tutor-backdrop.open{ display:block; }
+  .tutor-panel{
+    position:fixed; left:0; right:0; bottom:0; z-index:61;
+    height:min(88vh, 88dvh); max-width:660px; margin:0 auto;
+    background:#fff; color:var(--ink);
+    border-top-left-radius:22px; border-top-right-radius:22px;
+    box-shadow:0 -12px 34px rgba(40,15,35,.4);
+    display:flex; flex-direction:column;
+    transform:translateY(110%); transition:transform .22s ease;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .tutor-panel.open{ transform:translateY(0); }
+  .tutor-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 16px 10px; border-bottom:1px solid var(--line); }
+  .tutor-head .t{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1px; font-weight:600; color:var(--accent-dark); font-size:17px; display:block; }
+  .tutor-head small{ color:var(--ink-soft); font-size:12px; }
+  .tutor-head-btns{ display:flex; gap:6px; }
+  .tutor-head-btns button{ background:var(--accent-soft); border:none; color:var(--accent-dark); font-weight:800; border-radius:10px; padding:8px 11px; cursor:pointer; touch-action:manipulation; min-height:40px; font-family:inherit; font-size:13.5px; }
+  .tutor-settings{ padding:14px 16px; background:var(--accent-softer); border-bottom:1px solid var(--line); font-size:14px; line-height:1.45; }
+  .tutor-settings[hidden]{ display:none; }
+  .tutor-settings .msg{ font-weight:800; color:var(--accent-dark); margin:0 0 6px; }
+  .tutor-settings label{ font-weight:700; display:block; margin-bottom:6px; }
+  .tutor-settings input{ width:100%; font-size:16px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; color:var(--ink); }
+  .tutor-settings .row{ display:flex; gap:8px; margin-top:10px; }
+  .tutor-settings .row .btn{ min-height:44px; font-size:15px; }
+  .tutor-settings p{ margin:10px 0 0; color:var(--ink-soft); font-size:12.5px; }
+  .tutor-settings a{ color:var(--accent-dark); font-weight:700; }
+  .tutor-log{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .tmsg{ max-width:92%; padding:10px 13px; border-radius:16px; font-size:15px; line-height:1.5; overflow-wrap:anywhere; }
+  .tmsg.user{ align-self:flex-end; background:var(--accent); color:#fff; border-bottom-right-radius:5px; white-space:pre-wrap; }
+  .tmsg.bot{ align-self:flex-start; background:var(--accent-softer); border:1px solid var(--line); border-bottom-left-radius:5px; }
+  .tmsg.bot p{ margin:0 0 8px; } .tmsg.bot p:last-child{ margin-bottom:0; }
+  .tmsg.bot ul, .tmsg.bot ol{ margin:4px 0 8px; padding-left:20px; }
+  .tmsg.bot li{ margin:2px 0; }
+  .tmsg.bot h4{ margin:8px 0 4px; font-size:15px; color:var(--accent-dark); }
+  .tmsg.bot code{ background:#fff; border:1px solid var(--line); border-radius:5px; padding:0 4px; font-size:13.5px; }
+  .tmsg.bot hr{ border:none; border-top:1px solid var(--line); margin:8px 0; }
+  .tmsg.err{ align-self:stretch; max-width:none; background:var(--bad-bg); border:1px solid var(--bad-line); color:var(--bad); font-weight:700; font-size:14px; }
+  .tmsg.note{ align-self:center; background:none; color:var(--ink-soft); font-size:12.5px; padding:2px 8px; text-align:center; }
+  .tmsg .ctx{ display:block; font-size:12px; opacity:.85; font-weight:700; margin-bottom:2px; }
+  .typing{ display:inline-flex; gap:4px; padding:4px 0; }
+  .typing span{ width:7px; height:7px; border-radius:50%; background:var(--accent); opacity:.35; animation:tblink 1.1s infinite; }
+  .typing span:nth-child(2){ animation-delay:.18s; } .typing span:nth-child(3){ animation-delay:.36s; }
+  @keyframes tblink{ 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+  .tutor-chips{ display:flex; gap:7px; overflow-x:auto; padding:8px 16px 2px; scrollbar-width:none; }
+  .tutor-chips::-webkit-scrollbar{ display:none; }
+  .tutor-chips button{ flex:none; border:1px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:999px; padding:7px 12px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; touch-action:manipulation; }
+  .tutor-form{ display:flex; gap:8px; align-items:flex-end; padding:8px 16px 6px; }
+  .tutor-form textarea{ flex:1; resize:none; font-family:inherit; font-size:16px; line-height:1.35; padding:11px 12px; border:1px solid var(--line); border-radius:14px; max-height:130px; background:#fff; color:var(--ink); }
+  .tutor-form textarea:focus{ outline:2px solid var(--accent-soft); border-color:var(--accent); }
+  .tutor-send{ border:none; border-radius:14px; background:var(--accent); color:#fff; font-weight:800; font-size:15px; padding:0 16px; min-height:46px; cursor:pointer; font-family:inherit; touch-action:manipulation; }
+  .tutor-send.stop{ background:var(--accent-dark); }
+  .tutor-disclaimer{ margin:0; padding:0 16px 8px; font-size:11.5px; color:var(--ink-soft); text-align:center; }
+  .btn.tutor-ask{ margin-top:12px; min-height:46px; font-size:15px; }
 </style>
 </head>
 <body>
@@ -4661,6 +4727,7 @@ window.QBANK.copd = {
     stopTimer();
     quiz = null;
     removeCalc();
+    setTutorAvailable(true);
     var subjKeys = SUBJECT_ORDER.filter(function(k){ return window.QBANK && window.QBANK[k]; });
 
     var html = "";
@@ -4865,6 +4932,7 @@ window.QBANK.copd = {
 
     app.innerHTML = html;
     mountCalc();
+    setTutorAvailable(!isExam);
     if(isExam){ updateTimerDisplay(); }
     window.scrollTo(0,0);
   }
@@ -4921,6 +4989,7 @@ window.QBANK.copd = {
     }
     html += '<div class="lbl">Rationale</div><div>'+esc(q.rationale)+'</div>'
           + '<div class="lbl">Mnemonic</div><div class="mn">'+esc(q.mnemonic)+'</div>'
+          + '<button class="btn soft tutor-ask" data-act="tutor-ask" data-idx="'+quiz.index+'">💬 Ask the tutor about this</button>'
           + '</div>';
     return html;
   }
@@ -5123,6 +5192,7 @@ window.QBANK.copd = {
             +     '<div class="ra"><b>Correct:</b> '+esc(corrTexts)+'</div>'
             +     '<div class="ra"><b>Rationale:</b> '+esc(q.rationale)+'</div>'
             +     '<div class="mn">'+esc(q.mnemonic)+'</div>'
+            +     '<button class="btn soft tutor-ask" data-act="tutor-ask" data-idx="'+i+'">💬 Ask the tutor about this</button>'
             +   '</div>'
             + '</div>';
     });
@@ -5145,6 +5215,7 @@ window.QBANK.copd = {
 
     app.innerHTML = html;
     removeCalc();
+    setTutorAvailable(true);
     window.scrollTo(0,0);
   }
 
@@ -5299,6 +5370,36 @@ window.QBANK.copd = {
   }
 
   /* ============================================================
+     AI TUTOR HOOKS (chat itself lives in the module script below)
+     ============================================================ */
+  // The tutor is hidden during a timed exam so it can't be used mid-test.
+  function setTutorAvailable(on){
+    document.body.setAttribute("data-tutor", on ? "on" : "off");
+  }
+  function askTutorAbout(idx){
+    var q = quiz && quiz.questions[idx];
+    if(!q || !window.NURTutor) return;
+    var letters = "ABCDEF";
+    var optLines = q.display.map(function(opt, i){ return letters[i]+". "+opt.text; }).join("\n");
+    var letterFor = function(oi){
+      for(var i=0;i<q.display.length;i++){ if(q.display[i].orig===oi) return letters[i]+". "+q.options[oi]; }
+      return q.options[oi];
+    };
+    var yours = q.selected.length ? q.selected.map(letterFor).join("; ") : "(no answer)";
+    var correct = q.answer.map(letterFor).join("; ");
+    var text = "I'm working on this NCLEX practice question ("+quiz.subjectName+" · "+q.cat
+             + (q.type==="sata" ? " · select all that apply" : "")+"):\n\n"
+             + q.stem+"\n\n"+optLines+"\n\n"
+             + "My answer: "+yours+"\n"
+             + "Correct answer: "+correct+"\n"
+             + "Rationale from the answer key: "+q.rationale+"\n\n"
+             + (q.correct
+                 ? "I got it right, but help me understand the reasoning more deeply and how to recognize this kind of question next time."
+                 : "I got it wrong. Help me understand why the correct answer is right, why my answer is wrong, and what to look for next time.");
+    window.NURTutor.ask(text, "About Q"+(idx+1)+": "+q.stem);
+  }
+
+  /* ============================================================
      EVENT DELEGATION (click covers iOS taps on buttons)
      ============================================================ */
   function onTap(e){
@@ -5359,6 +5460,7 @@ window.QBANK.copd = {
       case "home": renderLanding(); break;
       case "calc-open": openCalc(); break;
       case "calc-close": closeCalc(); break;
+      case "tutor-ask": askTutorAbout(parseInt(t.getAttribute("data-idx"),10)); break;
     }
   }
 
@@ -5378,5 +5480,365 @@ window.QBANK.copd = {
   } else { boot(); }
 
 })();
+</script>
+<script type="module">
+/* ============================================================
+   AI Study Tutor - chat with Claude, straight from the browser.
+   The student pastes their own Anthropic API key; it is kept in
+   this browser's localStorage and sent only to api.anthropic.com.
+   ============================================================ */
+const MODEL = "claude-opus-5-5";
+const SDK_URL = "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.129.0/+esm";
+const KEY_STORE = "nur243_tutor_key_v1";
+const HIST_STORE = "nur243_tutor_history_v1";
+const LONG_CHAT = 40; // suggest a fresh chat after this many messages
+
+const SYSTEM_PROMPT = `You are a warm, encouraging nursing school tutor. Your student is in NUR 243 (adult medical-surgical nursing, respiratory unit: pneumonia, tuberculosis, asthma, and COPD; Lewis Medical-Surgical Nursing ch. 30-31) and is preparing for unit exams and the NCLEX-RN. They may also ask about other nursing topics - help with those too.
+
+How to teach:
+- Build understanding, not memorization: start from the pathophysiology, then connect it to assessment findings, priority nursing interventions, medications, and patient teaching.
+- When prioritizing, name the NCLEX framework you're using (ABCs, Maslow, nursing process/ADPIE, safety, acute vs. chronic, actual vs. potential problems).
+- When the student shares a practice question they have already answered, explain why the correct answer is right, why each distractor is wrong, and the test-taking strategy that gets there.
+- When the student shares a question they have not answered yet, give a hint or a guiding question first rather than the answer, unless they ask for the answer directly.
+- Offer a short mnemonic when one genuinely helps, and when it fits, end with one quick check-your-understanding question.
+- When asked to quiz them, write NCLEX-style questions (including select-all-that-apply) one at a time and wait for their answer before revealing the answer and rationale.
+- Use generic drug names, standard adult reference ranges, and note when values vary by facility or textbook. If you are not confident about something, say so and suggest checking the textbook or instructor.
+
+Format: the student reads on a phone. Keep replies focused - short paragraphs, bullet lists, and **bold** key terms; no tables. Aim for under about 250 words unless they ask for more depth.
+
+This is for studying only. If the student describes a real patient or clinical situation, help them think it through as a learning exercise but remind them to follow their instructor, preceptor, and facility policy for actual care decisions.`;
+
+const CHIPS = [
+  "Explain V/Q mismatch simply",
+  "Quiz me on COPD, one question at a time",
+  "Asthma meds: rescue vs. controller",
+  "TB precautions and teaching",
+  "How do I approach SATA questions?",
+  "Priority assessments for pneumonia",
+];
+
+/* ---------- storage (fails soft in private mode) ---------- */
+function load(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function store(k, v){
+  try { if(v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){}
+}
+let history = [];
+try { history = JSON.parse(load(HIST_STORE) || "[]"); } catch(e){ history = []; }
+if(!Array.isArray(history)) history = [];
+function saveHistory(){ store(HIST_STORE, JSON.stringify(history)); }
+
+/* ---------- SDK (loaded on first use) ---------- */
+let SDK = null;
+let client = null, clientKey = null;
+async function getClient(key){
+  if(!SDK){ SDK = (await import(SDK_URL)).default; }
+  if(!client || clientKey !== key){
+    client = new SDK({ apiKey: key, dangerouslyAllowBrowser: true });
+    clientKey = key;
+  }
+  return client;
+}
+
+/* ---------- rendering helpers ---------- */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function inline(s){ // s is already escaped
+  return s.replace(/`([^`]+)`/g, "<code>$1</code>")
+          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+          .replace(/(^|[^*\w])\*([^*\n]+)\*(?!\w)/g, "$1<em>$2</em>");
+}
+// Small, safe markdown subset: paragraphs, headings, bullet/numbered lists, bold/italic/code.
+function renderMarkdown(src){
+  let html = "", list = null, para = [];
+  const flushPara = () => { if(para.length){ html += "<p>" + inline(para.join("<br>")) + "</p>"; para = []; } };
+  const closeList = () => { if(list){ html += "</" + list + ">"; list = null; } };
+  for(const raw of esc(src).split("\n")){
+    const line = raw.trimEnd();
+    let m;
+    if(!line.trim()){ flushPara(); closeList(); continue; }
+    if((m = /^#{1,6}\s+(.*)$/.exec(line))){ flushPara(); closeList(); html += "<h4>" + inline(m[1]) + "</h4>"; continue; }
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){ flushPara(); closeList(); html += "<hr>"; continue; }
+    if((m = /^\s*[-*•]\s+(.*)$/.exec(line))){
+      flushPara(); if(list !== "ul"){ closeList(); html += "<ul>"; list = "ul"; }
+      html += "<li>" + inline(m[1]) + "</li>"; continue;
+    }
+    if((m = /^\s*\d+[.)]\s+(.*)$/.exec(line))){
+      flushPara(); if(list !== "ol"){ closeList(); html += "<ol>"; list = "ol"; }
+      html += "<li>" + inline(m[1]) + "</li>"; continue;
+    }
+    closeList(); para.push(line);
+  }
+  flushPara(); closeList();
+  return html;
+}
+function textOf(content){
+  if(typeof content === "string") return content;
+  return content.filter(b => b.type === "text").map(b => b.text).join("");
+}
+
+/* ---------- DOM ---------- */
+const fab = document.createElement("button");
+fab.className = "tutor-fab";
+fab.type = "button";
+fab.innerHTML = "💬 Tutor";
+fab.setAttribute("aria-label", "Open the study tutor");
+
+const shade = document.createElement("div");
+shade.className = "tutor-backdrop";
+
+const panel = document.createElement("section");
+panel.className = "tutor-panel";
+panel.setAttribute("role", "dialog");
+panel.setAttribute("aria-label", "Study tutor");
+panel.innerHTML =
+    '<header class="tutor-head">'
+  +   '<div><span class="t">💬 Study Tutor</span><small>Powered by Claude</small></div>'
+  +   '<div class="tutor-head-btns">'
+  +     '<button type="button" data-tact="settings" aria-label="API key settings">⚙️</button>'
+  +     '<button type="button" data-tact="clear">New chat</button>'
+  +     '<button type="button" data-tact="close">Done</button>'
+  +   '</div>'
+  + '</header>'
+  + '<div class="tutor-settings" hidden>'
+  +   '<p class="msg" id="tutor-settings-msg" hidden></p>'
+  +   '<label for="tutor-key">Claude API key</label>'
+  +   '<input id="tutor-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-...">'
+  +   '<div class="row">'
+  +     '<button type="button" class="btn" data-tact="save-key">Save key</button>'
+  +     '<button type="button" class="btn soft" data-tact="remove-key">Remove</button>'
+  +   '</div>'
+  +   '<p>Create a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> (API usage is billed to that account). '
+  +   'The key is saved only in this browser and is sent only to Anthropic. Don\'t save it on a shared computer.</p>'
+  + '</div>'
+  + '<div class="tutor-log" id="tutor-log" aria-live="polite"></div>'
+  + '<div class="tutor-chips">' + CHIPS.map(c => '<button type="button" data-tact="chip">' + esc(c) + '</button>').join("") + '</div>'
+  + '<form class="tutor-form" id="tutor-form">'
+  +   '<textarea id="tutor-input" rows="1" placeholder="Ask about any nursing topic…" aria-label="Message the tutor"></textarea>'
+  +   '<button type="submit" class="tutor-send" id="tutor-send">Send</button>'
+  + '</form>'
+  + '<p class="tutor-disclaimer">AI can make mistakes. Verify with your textbook. For study only, not patient care.</p>';
+
+document.body.append(fab, shade, panel);
+
+const logEl = panel.querySelector("#tutor-log");
+const inputEl = panel.querySelector("#tutor-input");
+const sendBtn = panel.querySelector("#tutor-send");
+const settingsEl = panel.querySelector(".tutor-settings");
+const settingsMsg = panel.querySelector("#tutor-settings-msg");
+const keyEl = panel.querySelector("#tutor-key");
+
+let busy = false;
+let activeStream = null;
+let pending = null; // message waiting for a key to be saved
+
+function scrollDown(){ logEl.scrollTop = logEl.scrollHeight; }
+
+function renderLog(){
+  let html = "";
+  if(!history.length){
+    html += '<div class="tmsg bot">' + renderMarkdown(
+      "Hi! I'm your study tutor. Ask me to **explain a concept**, **walk through a practice question**, " +
+      "or **quiz you**. Tap a suggestion below to get started.\n\n" +
+      "Tip: after you check an answer in Study mode, tap **Ask the tutor about this** to go over that question with me."
+    ) + '</div>';
+  }
+  for(const m of history){
+    if(m.role === "user"){
+      html += '<div class="tmsg user">'
+            + (m.label ? '<span class="ctx">📋 ' + esc(m.label.length > 110 ? m.label.slice(0,107) + "…" : m.label) + '</span>' + '(question details sent to the tutor)'
+                       : esc(m.content))
+            + '</div>';
+    } else {
+      html += '<div class="tmsg bot">' + renderMarkdown(textOf(m.content)) + '</div>';
+    }
+  }
+  if(history.length >= LONG_CHAT){
+    html += '<div class="tmsg note">This chat is getting long. Tap <b>New chat</b> when you switch topics.</div>';
+  }
+  logEl.innerHTML = html;
+  scrollDown();
+}
+
+function addBubble(cls, html){
+  const el = document.createElement("div");
+  el.className = "tmsg " + cls;
+  el.innerHTML = html;
+  logEl.appendChild(el);
+  scrollDown();
+  return el;
+}
+
+function setBusy(on){
+  busy = on;
+  sendBtn.textContent = on ? "Stop" : "Send";
+  sendBtn.classList.toggle("stop", on);
+}
+
+function openPanel(){
+  shade.classList.add("open");
+  panel.classList.add("open");
+  renderLog();
+  if(!load(KEY_STORE)) showSettings("Add your Claude API key to start chatting.");
+}
+function closePanel(){
+  shade.classList.remove("open");
+  panel.classList.remove("open");
+  inputEl.blur();
+}
+function showSettings(msg){
+  settingsEl.hidden = false;
+  settingsMsg.hidden = !msg;
+  settingsMsg.textContent = msg || "";
+  keyEl.value = load(KEY_STORE) || "";
+}
+function hideSettings(){ settingsEl.hidden = true; }
+
+function autosize(){
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 130) + "px";
+}
+
+function explainError(err){
+  if(SDK && err instanceof SDK.AuthenticationError) return "That API key was rejected. Check it in ⚙️ settings.";
+  if(SDK && err instanceof SDK.PermissionDeniedError) return "This API key doesn't have permission to use the tutor model.";
+  if(SDK && err instanceof SDK.RateLimitError) return "Too many requests right now. Wait a moment and try again.";
+  if(SDK && err instanceof SDK.APIConnectionError) return "Couldn't reach Claude. Check your internet connection and try again.";
+  if(SDK && err instanceof SDK.APIError){
+    if(err.status >= 500) return "Claude is busy or having trouble right now. Please try again in a minute.";
+    return "Claude returned an error: " + (err.error?.error?.message || err.message);
+  }
+  if(!SDK) return "Couldn't load the tutor. Check your internet connection and try again.";
+  return "Something went wrong: " + (err && err.message ? err.message : err);
+}
+
+async function send(text, label){
+  text = (text || "").trim();
+  if(!text || busy) return;
+  const key = load(KEY_STORE);
+  if(!key){
+    pending = { text, label };
+    showSettings("Add your Claude API key to start chatting.");
+    return;
+  }
+  hideSettings();
+
+  history.push(label ? { role: "user", content: text, label } : { role: "user", content: text });
+  renderLog();
+  const bubble = addBubble("bot", '<span class="typing"><span></span><span></span><span></span></span>');
+  setBusy(true);
+
+  let shown = "";
+  try {
+    const c = await getClient(key);
+    activeStream = c.beta.messages.stream({
+      model: MODEL,
+      max_tokens: 64000,
+      thinking: { type: "adaptive" },
+      output_config: { effort: "medium" },
+      // Medical topics can occasionally trip a safety classifier; let the API
+      // retry on its recommended fallback model instead of refusing outright.
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+      system: SYSTEM_PROMPT,
+      messages: history.map(m => ({ role: m.role, content: m.content })),
+    });
+    activeStream.on("text", (delta) => {
+      shown += delta;
+      bubble.innerHTML = renderMarkdown(shown);
+      scrollDown();
+    });
+    const msg = await activeStream.finalMessage();
+    if(msg.stop_reason === "refusal"){
+      history.pop();
+      renderLog();
+      addBubble("err", "The tutor couldn't answer that one. Try rephrasing it as a study question.");
+    } else {
+      // Keep the full content (including thinking blocks) so the conversation stays valid.
+      history.push({ role: "assistant", content: msg.content });
+      saveHistory();
+      renderLog();
+      if(msg.stop_reason === "max_tokens") addBubble("note", "(Reply was cut off. Ask me to continue.)");
+    }
+  } catch(err){
+    history.pop();
+    renderLog();
+    if(SDK && err instanceof SDK.APIUserAbortError){
+      addBubble("note", "Stopped.");
+    } else {
+      addBubble("err", esc(explainError(err)));
+      if(SDK && err instanceof SDK.AuthenticationError) showSettings("That key didn't work. Paste a valid key.");
+    }
+    if(!label && !inputEl.value){ inputEl.value = text; autosize(); }
+  } finally {
+    activeStream = null;
+    setBusy(false);
+  }
+}
+
+/* ---------- events ---------- */
+fab.addEventListener("click", openPanel);
+shade.addEventListener("click", closePanel);
+
+panel.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-tact]");
+  if(!t) return;
+  switch(t.getAttribute("data-tact")){
+    case "close": closePanel(); break;
+    case "settings":
+      if(settingsEl.hidden) showSettings(); else hideSettings();
+      break;
+    case "clear":
+      if(busy && activeStream) activeStream.abort();
+      if(!history.length || window.confirm("Start a new chat? This conversation will be cleared.")){
+        history = []; saveHistory(); renderLog();
+      }
+      break;
+    case "save-key": {
+      const k = keyEl.value.trim();
+      if(!k){ showSettings("Paste your API key first."); return; }
+      store(KEY_STORE, k);
+      hideSettings();
+      if(pending){ const p = pending; pending = null; send(p.text, p.label); }
+      else addBubble("note", "Key saved. Ask away!");
+      break;
+    }
+    case "remove-key":
+      store(KEY_STORE, null); keyEl.value = ""; client = null;
+      showSettings("Key removed from this browser.");
+      break;
+    case "chip":
+      send(t.textContent);
+      break;
+  }
+});
+
+panel.querySelector("#tutor-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if(busy){ if(activeStream) activeStream.abort(); return; }
+  const text = inputEl.value;
+  inputEl.value = ""; autosize();
+  send(text);
+});
+inputEl.addEventListener("input", autosize);
+inputEl.addEventListener("keydown", (e) => {
+  // Enter sends on a keyboard; on phones Enter adds a new line and the Send button sends.
+  if(e.key === "Enter" && !e.shiftKey && !window.matchMedia("(pointer:coarse)").matches){
+    e.preventDefault();
+    panel.querySelector("#tutor-form").requestSubmit();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && panel.classList.contains("open")) closePanel();
+});
+
+/* ---------- used by the quiz ("Ask the tutor about this") ---------- */
+window.NURTutor = {
+  ask(text, label){
+    openPanel();
+    send(text, label);
+  },
+};
 </script>
 </body></html>
